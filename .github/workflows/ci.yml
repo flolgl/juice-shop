@@ -22,6 +22,38 @@ env:
   ANGULAR_CLI_VERSION: 17
   CYCLONEDX_NPM_VERSION: '^1.12.0'
 jobs:
+  security-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out Git repository"
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac #v4.0.0
+      - name: "Use Node.js 18"
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d #v3.8.1
+        with:
+          node-version: ${{ env.NODE_DEFAULT_VERSION }}
+      - name: "Install CLI tools"
+        run: npm install -g @angular/cli@$ANGULAR_CLI_VERSION
+      - name: "Install Snyk"
+        run: npm install -g snyk
+      - name: "Run Snyk to check for vulnerabilities"
+        run: snyk test
+  sonarqube-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out Git repository"
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac #v4.0.0
+      - name: "Use Node.js 20"
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d #v3.8.1
+        with:
+          node-version: ${{ env.NODE_DEFAULT_VERSION }}
+      - name: "Install CLI tools"
+        run: npm install -g @angular/cli@$ANGULAR_CLI_VERSION
+      - name: "Set up SonarQube"
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: .
+      - name: "Run SonarQube Analysis"
+        run: sonar-scanner
   lint:
     runs-on: ubuntu-latest
     steps:
