@@ -210,9 +210,6 @@ jobs:
         shell: bash
   custom-config-test:
     runs-on: ubuntu-latest
-    strategy:
-    matrix:
-      config: [7ms, addo, bodgeit, ctf, fbctf, juicebox, mozilla, oss, quiet, tutorial, unsafe]
     steps:
       - name: "Check out Git repository"
         uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac #v4.0.0
@@ -231,7 +228,17 @@ jobs:
           timeout_minutes: 10
           max_attempts: 3
           command: >
-            NODE_ENV=${{ matrix.config }} npm run test:server
+            NODE_ENV=7ms npm run test:server &&
+            NODE_ENV=addo npm run test:server &&
+            NODE_ENV=bodgeit npm run test:server &&
+            NODE_ENV=ctf npm run test:server &&
+            NODE_ENV=fbctf npm run test:server &&
+            NODE_ENV=juicebox npm run test:server &&
+            NODE_ENV=mozilla npm run test:server &&
+            NODE_ENV=oss npm run test:server &&
+            NODE_ENV=quiet npm run test:server &&
+            NODE_ENV=tutorial npm run test:server &&
+            NODE_ENV=unsafe npm run test:server
   e2e:
     runs-on: ${{ matrix.os }}
     strategy:
